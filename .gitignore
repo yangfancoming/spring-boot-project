@@ -1,0 +1,15 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+target
+aliyun-oss.properties
+security.properties
+banner.txt
+bootstrap.yml
+gen
+/chapter2-6-5/src/test/java/com/goat/myOut.txt
