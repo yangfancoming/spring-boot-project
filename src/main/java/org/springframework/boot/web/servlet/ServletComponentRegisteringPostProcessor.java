@@ -1,18 +1,4 @@
-/*
- * Copyright 2012-2017 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package org.springframework.boot.web.servlet;
 
@@ -35,13 +21,12 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * {@link BeanFactoryPostProcessor} that registers beans for Servlet components found via
  * package scanning.
- *
+ * 它的作用就是：扫描被@WebServlet、@WebFilter及@WebListener的类，最后通过对应的ServletRegistrationBean、FilterRegistrationBean及ServletListenerRegistrationBean进行注册
  * @author Andy Wilkinson
  * @see ServletComponentScan
  * @see ServletComponentScanRegistrar
  */
-class ServletComponentRegisteringPostProcessor
-		implements BeanFactoryPostProcessor, ApplicationContextAware {
+class ServletComponentRegisteringPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware {
 
 	private static final List<ServletComponentHandler> HANDLERS;
 
@@ -62,8 +47,7 @@ class ServletComponentRegisteringPostProcessor
 	}
 
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-			throws BeansException {
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		if (isRunningInEmbeddedWebServer()) {
 			ClassPathScanningCandidateComponentProvider componentProvider = createComponentProvider();
 			for (String packageToScan : this.packagesToScan) {
@@ -72,15 +56,12 @@ class ServletComponentRegisteringPostProcessor
 		}
 	}
 
-	private void scanPackage(
-			ClassPathScanningCandidateComponentProvider componentProvider,
-			String packageToScan) {
-		for (BeanDefinition candidate : componentProvider
-				.findCandidateComponents(packageToScan)) {
+	// 通过componentProvider.findCandidateComponents(packageToScan)方法获取到对应的注解类，同时判断是否为以上说的三种，最后调用其doHandle方法完成注册功能
+	private void scanPackage(ClassPathScanningCandidateComponentProvider componentProvider,String packageToScan) {
+		for (BeanDefinition candidate : componentProvider.findCandidateComponents(packageToScan)) {
 			if (candidate instanceof ScannedGenericBeanDefinition) {
 				for (ServletComponentHandler handler : HANDLERS) {
-					handler.handle(((ScannedGenericBeanDefinition) candidate),
-							(BeanDefinitionRegistry) this.applicationContext);
+					handler.handle(((ScannedGenericBeanDefinition) candidate),(BeanDefinitionRegistry) this.applicationContext);
 				}
 			}
 		}
